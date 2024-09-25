@@ -27,9 +27,24 @@ spl_autoload_register( 'akka_bonus_autoload_classes' );
 
 function akka_bonus_autoload_classes( $class_name ) {
     if ( 0 === strpos( $class_name, 'Akka_Bonus' ) ) {
-        $class_file = AKKA_BONUS_PLUGIN_DIR . 'includes/' . strtolower( str_replace( '_', '-', $class_name ) ) . '.php';
-        if ( file_exists( $class_file ) ) {
-            require_once $class_file;
+
+        // Convert class name to file name
+        $class_file_name = 'class-' . strtolower( str_replace( '_', '-', $class_name ) ) . '.php';
+
+        // Directories to search in
+        $directories = array(
+            AKKA_BONUS_PLUGIN_DIR . 'includes/',
+            AKKA_BONUS_PLUGIN_DIR . 'admin/',
+            AKKA_BONUS_PLUGIN_DIR . 'public/',
+        );
+
+        // Loop through directories to find and include the class file
+        foreach ( $directories as $directory ) {
+            $class_file = $directory . $class_file_name;
+            if ( file_exists( $class_file ) ) {
+                require_once $class_file;
+                return;
+            }
         }
     }
 }
